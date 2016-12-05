@@ -95,6 +95,19 @@ class AstBuilder extends SqlBaseBaseVisitor<Node> {
         );
     }
 
+    @Override
+    public Node visitKillStatement(SqlBaseParser.KillStatementContext context) {
+        if (context. != null) {
+            Expression expr;
+            if (context.jobId().parameterOrSimpleLiteral().NULL() != null) {
+                expr = NullLiteral.INSTANCE;
+            } else if (context.jobId().)
+            return new KillStatement(context.jobId().parameterOrSimpleLiteral().getText());
+        }
+
+        return new KillStatement();
+    }
+
 //    @Override
 //    public Node visitRenameTable(SqlBaseParser.RenameTableContext context) {
 //        return new RenameTable(getLocation(context), getQualifiedName(context.from), getQualifiedName(context.to));
