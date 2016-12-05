@@ -21,6 +21,9 @@ if (project.hasProperty('testLogging')) {
     // Used to enable logging for tests
     test {
         testLogging.showStandardStreams = true
+        String esLoggerLevel = System.getProperty("es.logger.level", "INFO")
+        System.setProperty("es.logger.level", esLoggerLevel)
+        systemProperty "es.logger.level", esLoggerLevel
     }
 }
 
@@ -36,7 +39,7 @@ jmh {
 }
 
 test {
-    // by default `-D` arguments are "catched" in the gradle process 
+    // by default `-D` arguments are "caught" in the gradle process
     // and not passed-through to the test process.
     // this enables test options like '-Dtests.iters=20'
 
