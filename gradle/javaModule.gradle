@@ -3,6 +3,8 @@ apply plugin: "maven"
 apply plugin: 'de.thetaphi.forbiddenapis'
 apply plugin: 'me.champeau.gradle.jmh'
 
+import org.apache.tools.ant.filters.ReplaceTokens
+
 repositories {
     mavenCentral()
     jcenter()
@@ -36,7 +38,32 @@ jmh {
 }
 
 test {
-    // by default `-D` arguments are "catched" in the gradle process 
+    processResources{
+
+        def loggersLevelsVar = System.getProperty("loggers.levels")
+        String str = ""
+        if (loggersLevelsVar != null) {
+            Map<String, String> map = new HashMap<>();
+            final String[] loggersAndLevels = loggersLevelsVar.split(",");
+            for (String loggerAndLevel : loggersAndLevels) {
+                String[] loggerAndLevelArray = loggerAndLevel.split(":");
+                if (loggerAndLevelArray.length == 2) {
+                    String loggerName = loggerAndLevelArray[0];
+                    String level = loggerAndLevelArray[1];
+                    map.put(loggerName, level);
+                }
+            }
+
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                str += "log4j.logger." + entry.getKey() + "=" + entry.getValue() + ", out" + System.lineSeparator()
+                str += "log4j.additivity." + entry.getKey() + "=false" + System.lineSeparator() + System.lineSeparator()
+            }
+        }
+
+        filter(ReplaceTokens, tokens:['loggersAndLevels': str])
+    }
+
+    // by default `-D` arguments are "catched" in the gradle process
     // and not passed-through to the test process.
     // this enables test options like '-Dtests.iters=20'
 
